@@ -1,0 +1,346 @@
+------------------------ How to Create a new game ----------------------------------------------------------------------
+
+1. Create a new JS File and call it <YourGame>.js
+
+2. Create a HTML with an Canvas
+
+3. set window.allLoaded to true once all your images loaded
+
+4. Add the following imports on top of your file:
+import {startLoop} from "/engine/js/MainGame.js";
+import {getContentMngr} from "/engine/js/MainGame.js";
+
+5. Create an exported method to start your game, that's called from your HTML later on
+e.g. export function startGame
+
+6. Call your startGame method in your HTML you created before
+
+7. In it load your images/Sounds etc. don't forget to call "startLoop();" from MainGame.js in it
+
+8. Start adding your content
+
+9. Add your content to one of the following groups using the "contentmanager"
+addTickableObject(yourActor) -> every frame the Tick(deltaTime) in your Actor is called
+addDrawableObject(yourActor) -> every frame the Draw() method in your Actor is called
+addCollidableEventsObject(yourActorsCollisionComponent) -> your Actor is used for collision detection
+
+Check the Folder "examplegame" and "index.html" for an example for an implemented game.
+
+
+------------------------ How to check for collisions -------------------------------------------------------------------
+
+You created an Actor and now want to know if it collides with another Actor? Thats how you do it.
+
+1. In your Actor define a new variable. e.g. "collisioncomponent"
+
+2. use contentmanager.addCollidableEventsObject to put it into the collision check
+
+3. implement "DoCollide(other, point, owncollisioncomp)"
+    other -> is the collisioncomponent it collided with. use other.owner to get the actor of the collided component
+    point -> thats the point where the collision happened
+    owncollisioncomp -> the component of the current Actor it collided with. You can for example create one on the body and one on the feet to check if a player "jumped" on a opponent or was hit by it
+    HINT: if you use multiple collisioncomponents on the same Actor it can collide with itself, dont forget to handle this
+
+4. Repeat 1-3 for at least another actor
+
+5. Done! now you recieve collision events on both actors you can handle
+
+
+------------------------ Technical Documentation -----------------------------------------------------------------------
+
+Please manipulate following Files only if necessary.
+To actually use them create new classes and extend those mentioned here!
+
+---> MainGame.js <---
+Heart of your Game. Handles Tick/Draw and Collision calls.
+
+--- Methods ---
+getContentMngr() -> returns contentmanager
+endGame() -> stops all Tick and Draw calls
+startLoop() -> start to call tick/draw calls
+
+
+--> ContentManager.js <---
+Holds lists of all your objects divided into "Draw-", "Tick-" and "Collide-lists"
+
+--- Methods ---
+addTickableObject(actor) -> Tick(deltaTime) of actor will be called every frame
+removeTickableObject(actor) -> actor is removed from tickable objects
+addDrawableObject(actor) -> Draw() of actor will be called every frame
+removeDrawableObject(actor) -> actor is removed from drawable objects
+addCollidableEventsObject(collisioncomponent) -> collisioncomponent.owner.DoCollide is called if it collide with another component
+removeDrawableObject(actor) -> collisions are ignored afterwards
+
+------                                         Controls:                                                          ------
+
+---> KeyboardControl.js <---
+Description: Allows to intercept Keyboard commands
+
+--- Methods ---
+activateKeyIntercept -> Have to be called one time. Creates events to intercept keys
+isKeyDown(KEY) -> returns true if given key is currently pressed
+
+
+---> MouseControl.js <---
+Allows to read position of the mouse cursor and mouse clicks.
+
+--- Constructor ---
+Need your canvas in constructor
+
+--- Methods ---
+initialize -> Have to be called one time. Creates events to intercept mouse movement
+getMousePosition -> returns current position of the mouse pointer
+isMouseButtonDown -> returns if left click is currently held down
+isMouseClicked -> returns true one time after a mouse click (left mouse button pressed AND released)
+
+
+
+------                                         Elements:                                                          ------
+
+---> Actor.js <---
+Description: An actual drawable Object (Player, Enemy, Collidable objects, Interactive objects...)
+
+--- Methods ---
+Tick(deltaTime) -> Called every Frame, override it with your Tick to add Logic like movement
+Draw() -> Called every Frame, your object should be Drawn to the canvas by overriding this method
+RotateCanvas() -> to apply rotation this needs to be called in your Draw() method
+UnRotateCanvas() -> if you use RotateCanvas dont forget to "unrotate" it again after use
+Destroy() -> Removes Actor from Drawable/Tickable objects
+DoCollide(other, point, owncollisioncomp) -> is called when one of the actors collision component collides with another actor. other -> Collisioncomponent it collided with, point -> Vector with xy coordinates of collision, owncollisioncomp -> collisioncomponent of current actor (useful if actor has multiple ones)
+
+--- Constructor ---
+x: x-Position of Actor
+y: y-Position of Actor
+renderpriority: order when this should be rendered (higher render above lower actors)
+
+--- Properties ---
+x: x-Position of Actor
+y: y-Position of Actor
+renderpriority: order when this should be rendered (higher render above lower actors)
+rotation: rotation of Actor
+
+
+---> Player.js <---
+Description: This should be your Player Character. This one extends an Actor.
+
+--- Constructor ---
+keyboardControl: KeyboardControl object to handle key presses in player character. You need at least this one, or the mouse control one.
+mouseControl: MouseControl object to handle mouse events in player character. You need at least this one, or the keyboard control one.
+x: x-Position of Player
+y: y-Position of Player
+renderpriority: order when this should be rendered (higher render above lower actors)
+
+--- Properties ---
+see Actor.js
+keyboardControl: Object to handle keyboard events
+mouseControl: Object to handle mouse events
+
+
+---> Tile.js <---
+Description: If your game uses a Tilemap (e.g. for platformer or RPGs) you can use this one as a Single "Tile" class
+
+--- Constructor ---
+x: x-Position of Tile
+y: y-Position of Tile
+renderpriority: order when this should be rendered (higher render above lower actors)
+img: Image of the Tile used for render
+docollide: if true an collisioncomponent is created automatically
+id: unique id you can use to handle collision events
+
+--- Methods ---
+Reset(offset) -> return tile to original position (offset optional if you want to restart mid-level)
+Tick(deltaTime) -> updates collisioncomponent every frame
+
+--- Properties ---
+see actor
+image: contains image of current tile
+id: id of current tile
+startx: first position of tile
+starty: first position of tile
+
+
+------                                         Forms   :                                                          ------
+
+
+---> BaseForm.js <---
+Base for all of the following forms, contains only xy coordinates
+
+--- Constructor ---
+x: x-Position of Tile
+y: y-Position of Tile
+
+--- Properties ---
+x: x-Position of Tile
+y: y-Position of Tile
+
+
+---> Circle.js <---
+Contains everything to create a circle
+
+--- Constructor ---
+x: x-Position of Tile
+y: y-Position of Tile
+radius: radius of circle
+
+--- Properties ---
+see Baseform.js
+radius: radius of circle
+
+
+---> Rectangle.js <---
+Contains everything to create a rectangle
+
+--- Constructor ---
+x: x-Position of Tile
+y: y-Position of Tile
+width: width of rectangle
+height: height of rectangle
+
+--- Properties ---
+see Baseform.js
+width: width of rectangle
+height: height of rectangle
+
+
+---> CollisionComponent.js <---
+Base for the collision and for the following collision component
+
+--- Constructor ---
+owner: owning pawn of current collisioncomponent
+
+--- Properties ---
+owner: owning pawn of current collisioncomponent
+
+--- Methods ---
+DoCollide(other, point, owncollisioncomp) is called when one of the actors collision component collides with another actor. other -> Collisioncomponent it collided with, point -> Vector with xy coordinates of collision, owncollisioncomp -> collisioncomponent of current actor (useful if actor has multiple ones)
+
+
+---> CollisionComponentCircle.js <---
+Creates a collision component in form of a circle
+
+--- Constructor ---
+owner: owning pawn of current collisioncomponent
+circle: Circle object of the actual component
+
+--- Properties ---
+owner: owning pawn of current collisioncomponent
+circle: Circle object of the actual component
+
+--- Methods ---
+DoCirclesOverlap(circle1, circle2) -> checks if 2 circles do overlap. Returns and object with "collide: true/false" and "point: vector"
+
+
+---> CollisionComponentRectangle.js <---
+Creates a collision component in form of a rectangle
+
+--- Constructor ---
+owner: owning pawn of current collisioncomponent
+rectangle: Rectangle object of the actual component
+
+--- Properties ---
+owner: owning pawn of current collisioncomponent
+rectangle: Rectangle object of the actual component
+
+--- Methods ---
+DoRectanglesOverlap(rectangle1, rectangle2) -> checks if 2 rectangles do overlap. Returns and object with "collide: true/false" and "point: vector"
+DoCircleAndRectangleOverlap(rectangle1, circle2) -> checks if a rectangle and a circle do overlap. Returns and object with "collide: true/false" and "point: vector"
+
+
+
+------                                         Sound   :                                                          ------
+
+---> SoundPlayer.js <---
+Used to initialize and play sounds
+
+--- Constructor ---
+sounds: array of SoundClass with all sounds
+
+--- Properties ---
+LoadedSounds: array with all LOADED sounds. Dont add sounds here manually
+
+--- Methods ---
+AddSound(sound) -> Add new SoundClass and load it
+PlaySound(idx) -> Play a sound using its ID
+PlaySoundByName(name) -> Play a sound using its name
+
+
+------                                         Images   :                                                         ------
+
+---> ImageHelper.js <---
+Currently only hold logic to create tilemaps or animated images
+
+--- Constructor ---
+none - only static methods
+
+--- Properties ---
+none - only static methods
+
+--- Methods ---
+CreateImagesArrayForTilemap(img, tilewidth, tileheight, fromx, tox, fromy, toy) -> Create an array of "Image" to help you creating your tileset. img: image of your tileset, tilewidth: width of one tile, tileheight: height of one tile, fromx: x-position of first tile, tox: x-position of last tile, fromy: y-position of first tile, toy: y-position of last tile
+CreateAnimatedImageForTileset(img, tilewidth, tileheight, fps, fromx, tox, fromy, toy) -> Create an "AnimatedImage" using your tileset. fps: fps used to play your animation, rest of parameters see CreateImagesArrayForTilemap
+
+
+---> AnimatedImage.js <---
+Image that plays animation using a given image list
+
+--- Constructor ---
+images: array with "Image" containing the frames
+fps: fps used to play animation
+
+--- Properties ---
+paused: pause animation
+currentFrame: currently shown frame
+elapsedTime: elapsed time since last frame
+currentFrame: currently shown frame
+frametime: time an image is shown
+images: list of all frames/Images
+
+
+--- Methods ---
+Tick(deltaTime) -> needs to be called to update elapsedtime
+Pause() -> pause animation
+Stop() -> pause and reset animation
+Play() -> resume playing animation
+GetCurrentFrame() -> return current Image for your Draw() method
+
+
+
+------                                         Images   :                                                         ------
+
+
+---> Vector2.js <---
+Contains the Vector for calculations/directions
+
+--- Constructor ---
+x: x-direction of Vector
+y: y-direction of Vector
+
+--- Properties ---
+x: x-direction of Vector
+y: y-direction of Vector
+
+
+---> RotationMath.js <---
+Contains basic calculation for rotations
+
+--- Constructor ---
+none - only static methods
+
+--- Methods ---
+toRadian(degree) -> convert degrees to radian
+getForwardVector(vector, radian) -> get forward vector of given vector and radian
+
+
+---> VectorMath.js <---
+Contains basic calculation for vectors
+
+--- Constructor ---
+none - only static methods
+
+--- Methods ---
+add(vector, vector) -> add one vector to the other
+subtract(vector, vector) -> subtract one vector from the other
+multiply(vector, vector) -> multiplay 2 vectors
+divide(vector, vector) -> divide 2 vectors
+interpolate(startvector, finishvector, timemax, elapsed) -> interpolate from one vector to an other to create a smooth movement
+applyGravity(currentForce, gravityVector, deltaTime) -> return vector after gravity is applied, see MyPlayer.js in examplegame for usage
