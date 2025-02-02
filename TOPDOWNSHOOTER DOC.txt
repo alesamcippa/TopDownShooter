@@ -1,0 +1,27 @@
+TOPDOWNSHOOTER DOC
+
+
+Just a simple topdown shooter, with one player, three types of enemies and a heal item. The player moves with the classical wasd and shoots with the left mouseclick.
+He can only shoot in a radius of 90 degrees in the direction he is looking at. The target is to just survive and kill as most enemies as possible and to not get hit by the enemies.
+
+What I need from you is the following:
+Please implement the sprites for the Normal and the Strong (Stark) Enemy with the assets that are already uploaded you. The fast (Schnell) enemy already has the sprites implemented, but I think I did something wrong as the enemy is extremely small. Please fix that too.
+For the heal item, I also uploaded you the sprite for that. (It currently is the dark-red block)
+The player is already completely implemented like I needed him.
+
+I would also like a map that is approximately 3x the size of the visible window, where the player can move through the map and the map "scrolls" around.
+Please make the map yourself or find a sprite/canva online, it really doesn´t matter to me. It should be GTA1/GTA2 style and have implemented collisions for stuff on the map (Like houses, lightpoles etc.). It should fit the retro style that the characters also have though and be topdown (2D).
+
+Please be aware that the enemies in the current state all have the same type of attack and general features, which I would like to change in the future. If it fits the budget and timeframe, I would be really happy if you can do that too for me. If not, it isn´t a problem.
+
+The three types of enemies are:
+Fast = Is faster than the normal enemies and attacks with a melee by being near the player. Can only take 1 hit.
+Normal (the green block right now) = Normal enemy that shoots the player, but doesn´t attack nearby. The enemy stays away from the player approximately 75px and then begins shooting after being 100px near the player. Can take 2 hits.
+Tank (Stark; the purple block right now) = Is extremely slow, also shoots the player but stays away 50% more from the player than the normal enemy. If the player gets hit by these shots, he dies instantly. Can take 3 hits.
+
+The player is already implemented how I like, so please don´t change anything regarding him.
+
+Like I said, the most is already implemented (besides the enemies that I would like to have like described), so please change as little as possible with the files. The main task really are the sprites for the enemies being in the correct size (as the player), working as expected and a functional map as described. Then, like I said, if you got time and it fits the budget, please also implement the enemy logic like I described you above. Also, please keep it as simple as possible like I did. It doesn´t have to be well organized or something, it just has to work. So please keep the general layout and code from the existing files as untouched or simple as possible, like it is now.
+
+
+IMPORTANT: The FPSBlock and jumprun folders are just an example of my other projects and I used them as help for my project now. Please do not touch them or do anything in them, they are not part of the project.
