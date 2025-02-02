@@ -1,4 +1,4 @@
-let difficulty = 1;  // Startwert für Schwierigkeit
+let difficulty = 1;  // Startwert fÃ¼r Schwierigkeit
 let enemySpawnRate = 2000; // Anfangs spawnt ein Gegner alle 2 Sekunden
 let lastDifficultyIncrease = 0;
 let healItems = [];
@@ -30,11 +30,16 @@ function spawnEnemy() {
 
     let type = "normal"; // Standard-Gegner
 
-    // Je nach Schwierigkeit stärkere Gegner häufiger machen
+    // Je nach Schwierigkeit stÃ¤rkere Gegner hÃ¤ufiger machen
     if (difficulty >= 3 && Math.random() < 0.3) type = "fast";
     if (difficulty >= 5 && Math.random() < 0.3) type = "tank";
 
-    enemies.push(new Enemy(x, y, type));
+    const newEnemy = new Enemy(x, y, type);
+
+    // **LOG fÃ¼r die GegnergrÃ¶ÃŸe direkt nach der Instanziierung**
+    console.log(`Spawned enemy (${type}) at (${x}, ${y}) -> Size: ${newEnemy.width}x${newEnemy.height}`);
+
+    enemies.push(newEnemy);
 }
 
 function Tick(deltaTime) {
@@ -53,8 +58,8 @@ function Tick(deltaTime) {
     // Schwierigkeit steigt alle 10 Sekunden
     if (Date.now() - lastDifficultyIncrease > 10000) {
         difficulty += 1;
-        enemySpawnRate = Math.max(500, enemySpawnRate - 200); // Spawn-Rate verkürzen, min. 500ms
-        console.log("Schwierigkeit erhöht! Stufe:", difficulty, "Spawn-Rate:", enemySpawnRate);
+        enemySpawnRate = Math.max(500, enemySpawnRate - 200); // Spawn-Rate verkï¿½rzen, min. 500ms
+        console.log("Schwierigkeit erhï¿½ht! Stufe:", difficulty, "Spawn-Rate:", enemySpawnRate);
         lastDifficultyIncrease = Date.now();
     }
 
@@ -68,7 +73,7 @@ function Tick(deltaTime) {
         currentPlayer.Tick(deltaTime);
     }
 
-    // Kollisionsprüfung: Kugeln vs Gegner
+    // Kollisionsprï¿½fung: Kugeln vs Gegner
     for (let i = enemies.length - 1; i >= 0; i--) {
         let enemy = enemies[i];
 
@@ -94,10 +99,10 @@ function Tick(deltaTime) {
         let dy = currentPlayer.yPos - enemy.y;
         let distance = Math.sqrt(dx * dx + dy * dy);
 
-        if (distance < 15) { // Falls Spieler und Gegner sich berühren
+        if (distance < 15) { // Falls Spieler und Gegner sich berï¿½hren
             playerHP--;
             console.log("Spieler getroffen! HP:", playerHP);
-            enemy.active = false; // Gegner verschwindet nach Berührung
+            enemy.active = false; // Gegner verschwindet nach Berï¿½hrung
 
             if (playerHP <= 0) {
                 playSound("assets/gameover.mp3"); // ? Game Over Sound
@@ -112,7 +117,7 @@ function Tick(deltaTime) {
         let dy = currentPlayer.yPos - item.y;
         let distance = Math.sqrt(dx * dx + dy * dy);
 
-        if (distance < 15) { // Falls der Spieler das Item berührt
+        if (distance < 15) { // Falls der Spieler das Item berï¿½hrt
             playerHP = Math.min(playerHP + 1, 3); // Max. 3 HP
             healItems.splice(i, 1); // Item entfernen
             console.log("Heil-Item aufgesammelt! HP:", playerHP);
@@ -199,6 +204,6 @@ function spawnHealItem() {
 
 function playSound(src) {
     let sound = new Audio(src);
-    sound.volume = 0.5; // Lautstärke auf 50% setzen
+    sound.volume = 0.5; // Lautstï¿½rke auf 50% setzen
     sound.play();
 }

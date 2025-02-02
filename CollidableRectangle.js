@@ -1,6 +1,6 @@
 class CollidableRectangle extends Collidable {
     Tick(deltaTime) {
-        // Hier könnten wir z. B. Bewegung hinzufügen
+
     }
 
     Draw() {
